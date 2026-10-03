@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Keuangan - Ugie Kopi</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-12">
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+    
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 border-b border-gray-200 gap-4">
+      <div class="flex items-center gap-3">
+        <div class="p-3 bg-amber-100 text-amber-800 rounded-2xl shadow-sm text-2xl">
+          ☕
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Ugie Kopi Dashboard</h1>
+          <p class="text-sm text-gray-500">Real-time Financial Monitoring & Cash Flow</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Sync
+        </span>
+        <button onclick="loadDashboardData()" class="px-4 py-2 bg-white border border-gray-300 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm transition flex items-center gap-2">
+          🔄 Refresh
+        </button>
+        <a href="/admin" class="px-4 py-2 bg-gray-900 text-white rounded-xl text-sm font-medium hover:bg-gray-800 shadow-sm transition flex items-center gap-2">
+          ➕ Input Admin
+        </a>
+      </div>
+    </div>
+
+    <!-- 4 CARD RINGKASAN UTAMA -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6">
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm font-medium text-gray-500">Total Pendapatan</span>
+          <div class="p-2.5 bg-sky-100 text-sky-600 rounded-xl">💳</div>
+        </div>
+        <div id="total-pendapatan" class="text-2xl font-extrabold text-gray-900">Rp 0</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm font-medium text-gray-500">HPP / Bahan Baku</span>
+          <div class="p-2.5 bg-amber-100 text-amber-600 rounded-xl">📦</div>
+        </div>
+        <div id="hpp-bahan-baku" class="text-2xl font-extrabold text-gray-900">Rp 0</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm font-medium text-gray-500">Biaya Operasional</span>
+          <div class="p-2.5 bg-rose-100 text-rose-600 rounded-xl">🧾</div>
+        </div>
+        <div id="biaya-operasional" class="text-2xl font-extrabold text-gray-900">Rp 0</div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-sm font-medium text-gray-500">Laba Bersih</span>
+          <div class="p-2.5 bg-emerald-100 text-emerald-600 rounded-xl">📈</div>
+        </div>
+        <div id="laba-bersih" class="text-2xl font-extrabold text-emerald-600">Rp 0</div>
+      </div>
+    </div>
+
+    <!-- ARUS KAS & PIUTANG GRID -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            💵 Ringkasan Arus Kas
+          </h2>
+          <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-medium">Cash Flow</span>
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-gray-50">
+            <span class="text-gray-600 text-sm flex items-center gap-2">
+              <span class="text-emerald-500">↙</span> Total Kas Masuk
+            </span>
+            <span id="total-kas-masuk" class="font-bold text-emerald-600">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-gray-50">
+            <span class="text-gray-600 text-sm flex items-center gap-2">
+              <span class="text-rose-500">↗</span> Total Kas Keluar
+            </span>
+            <span id="total-kas-keluar" class="font-bold text-rose-600">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+            <span class="font-semibold text-gray-800">Saldo Kas Akhir</span>
+            <span id="saldo-kas-akhir" class="text-xl font-extrabold text-blue-600">Rp 0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+            💳 Status Piutang (Kasbon)
+          </h2>
+          <span class="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-md font-medium">Receivables</span>
+        </div>
+        <div class="space-y-4">
+          <div class="flex justify-between items-center py-2 border-b border-gray-50">
+            <span class="text-gray-600 text-sm">Total Piutang Kotor</span>
+            <span id="total-piutang-kotor" class="font-bold text-gray-900">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center py-2 border-b border-gray-50">
+            <span class="text-gray-600 text-sm">Sudah Dilunasi</span>
+            <span id="total-sudah-dilunasi" class="font-bold text-emerald-600">Rp 0</span>
+          </div>
+          <div class="flex justify-between items-center p-4 bg-amber-50/60 rounded-xl">
+            <span class="font-semibold text-gray-800">Sisa Piutang Aktif</span>
+            <span id="sisa-piutang-aktif" class="text-xl font-extrabold text-amber-600">Rp 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEKSI 3 GRAFIK KEUANGAN TERPISAH (VERTIKAL KE BAWAH) -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-2">📊 Analisis Grafik Harian</h2>
+      <p class="text-xs text-gray-500 mb-6">Visualisasi terpisah untuk Tren Penjualan, Pengeluaran, dan Laba Rugi</p>
+
+      <!-- Mengubah layout grid menjadi flex-col agar berjejer ke bawah -->
+      <div class="flex flex-col gap-6">
+        
+        <!-- 1. GRAFIK PENJUALAN HARIAN -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                📈 Penjualan Harian
+              </h3>
+              <span class="text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                Omset
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Total pendapatan kotor per hari</p>
+          </div>
+          <div class="relative w-full h-72">
+            <canvas id="salesChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 2. GRAFIK PENGELUARAN HARIAN -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                📉 Pengeluaran Harian
+              </h3>
+              <span class="text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 px-2.5 py-0.5 rounded-full">
+                Beban
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Total biaya operasional & bahan baku per hari</p>
+          </div>
+          <div class="relative w-full h-72">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 3. GRAFIK LABA RUGI HARIAN -->
+        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="text-base font-bold text-gray-900 flex items-center gap-2">
+                ⚖️ Laba Rugi Harian
+              </h3>
+              <span class="text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-2.5 py-0.5 rounded-full">
+                Profit
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Keuntungan bersih (Omset - Pengeluaran) per hari</p>
+          </div>
+          <div class="relative w-full h-72">
+            <canvas id="profitChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    let chartInstances = {
+      sales: null,
+      expense: null,
+      profit: null
+    };
+
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(angka || 0);
+    }
+
+    function parseAngka(val) {
+      if (!val) return 0;
+      const cleaned = val.toString().replace(/[^0-9-]/g, '');
+      return parseInt(cleaned, 10) || 0;
+    }
+
+    async function loadDashboardData() {
+      try {
+        // 1. Ambil Laba Rugi Summary
+        const resLabaRugi = await fetch('/api/laporan/laba-rugi');
+        const dataLabaRugi = await resLabaRugi.json();
+        if (dataLabaRugi.success) {
+          const r = dataLabaRugi.ringkasan;
+          document.getElementById('total-pendapatan').innerText = formatRupiah(r.total_pendapatan);
+          document.getElementById('hpp-bahan-baku').innerText = formatRupiah(r.hpp_bahan_baku);
+          document.getElementById('biaya-operasional').innerText = formatRupiah(r.biaya_operasional);
+          document.getElementById('laba-bersih').innerText = formatRupiah(r.laba_bersih);
+        }
+
+        // 2. Ambil Arus Kas Summary
+        const resArusKas = await fetch('/api/laporan/arus-kas');
+        const dataArusKas = await resArusKas.json();
+        if (dataArusKas.success) {
+          document.getElementById('total-kas-masuk').innerText = formatRupiah(dataArusKas.kas_masuk.total_kas_masuk);
+          document.getElementById('total-kas-keluar').innerText = formatRupiah(dataArusKas.kas_keluar.total_kas_keluar);
+          document.getElementById('saldo-kas-akhir').innerText = formatRupiah(dataArusKas.saldo_kas_akhir);
+        }
+
+        // 3. Ambil Status Piutang Summary
+        const resPiutang = await fetch('/api/laporan/piutang');
+        const dataPiutang = await resPiutang.json();
+        if (dataPiutang.success) {
+          document.getElementById('total-piutang-kotor').innerText = formatRupiah(dataPiutang.total_piutang_kotor);
+          document.getElementById('total-sudah-dilunasi').innerText = formatRupiah(dataPiutang.total_sudah_dilunasi);
+          document.getElementById('sisa-piutang-aktif').innerText = formatRupiah(dataPiutang.sisa_piutang_aktif);
+        }
+
+        // 4. Render 3 Grafik Terpisah
+        renderAllCharts();
+
+      } catch (error) {
+        console.error('Error memuat data dashboard:', error);
+      }
+    }
+
+    async function renderAllCharts() {
+      try {
+        const [resPenjualan, resPengeluaran] = await Promise.all([
+          fetch('/api/laporan/penjualan-harian'),
+          fetch('/api/laporan/pengeluaran-harian')
+        ]);
+
+        const resultPenjualan = await resPenjualan.json();
+        const resultPengeluaran = await resPengeluaran.json();
+
+        // Olah Data Penjualan
+        const salesByDate = {};
+        if (resultPenjualan.success && resultPenjualan.data) {
+          resultPenjualan.data.forEach(item => {
+            const tgl = item.Tanggal || 'Tanpa Tanggal';
+            const total = parseAngka(item.Total) || (parseAngka(item.Qty) * parseAngka(item.Harga));
+            salesByDate[tgl] = (salesByDate[tgl] || 0) + total;
+          });
+        }
+
+        // Olah Data Pengeluaran
+        const expenseByDate = {};
+        if (resultPengeluaran.success && resultPengeluaran.data) {
+          resultPengeluaran.data.forEach(item => {
+            const tgl = item.Tanggal || 'Tanpa Tanggal';
+            const nominal = parseAngka(item.Nominal);
+            expenseByDate[tgl] = (expenseByDate[tgl] || 0) + nominal;
+          });
+        }
+
+        // Seluruh Tanggal Unik
+        const allDates = Array.from(new Set([...Object.keys(salesByDate), ...Object.keys(expenseByDate)])).sort();
+
+        const salesValues = allDates.map(tgl => salesByDate[tgl] || 0);
+        const expenseValues = allDates.map(tgl => expenseByDate[tgl] || 0);
+        const profitValues = allDates.map(tgl => (salesByDate[tgl] || 0) - (expenseByDate[tgl] || 0));
+
+        // Config Dasar Chart
+        const commonOptions = {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: '#1F2937',
+              padding: 10,
+              titleFont: { family: 'Inter', size: 12 },
+              bodyFont: { family: 'Inter', size: 13, weight: 'bold' },
+              callbacks: {
+                label: (ctx) => ` Rp ${ctx.parsed.y.toLocaleString('id-ID')}`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11 } } },
+            y: {
+              beginAtZero: true,
+              ticks: {
+                font: { family: 'Inter', size: 10 },
+                callback: (val) => 'Rp ' + (val / 1000) + 'k'
+              }
+            }
+          }
+        };
+
+        // 1. Render Chart Penjualan (Hijau Emerald)
+        createSingleChart('salesChart', 'sales', allDates, salesValues, '#10B981', 'rgba(16, 185, 129, 0.15)', commonOptions);
+
+        // 2. Render Chart Pengeluaran (Merah Rose)
+        createSingleChart('expenseChart', 'expense', allDates, expenseValues, '#EF4444', 'rgba(239, 68, 68, 0.15)', commonOptions);
+
+        // 3. Render Chart Laba Rugi (Biru)
+        createSingleChart('profitChart', 'profit', allDates, profitValues, '#3B82F6', 'rgba(59, 130, 246, 0.15)', commonOptions);
+
+      } catch (err) {
+        console.error('Error saat merender 3 grafik:', err);
+      }
+    }
+
+    function createSingleChart(canvasId, instanceKey, labels, data, colorHex, bgHex, commonOptions) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+
+      if (chartInstances[instanceKey]) {
+        chartInstances[instanceKey].destroy();
+      }
+
+      chartInstances[instanceKey] = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            borderColor: colorHex,
+            borderWidth: 2.5,
+            backgroundColor: bgHex,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: colorHex,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: commonOptions
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDashboardData);
+  </script>
+</body>
+</html>

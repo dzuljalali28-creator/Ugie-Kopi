@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Input - Ugie Kopi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8fafc;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #0f172a;
+    }
+    .card-form {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px -2px rgba(0,0,0,0.03);
+    }
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      padding: 0.6rem 0.85rem;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #0d6efd;
+      box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+    }
+    .btn-submit-blue {
+      background-color: #2563eb;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 0.7rem;
+    }
+    .btn-submit-blue:hover { background-color: #1d4ed8; color: white; }
+    .btn-submit-red {
+      background-color: #dc2626;
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      padding: 0.7rem;
+    }
+    .btn-submit-red:hover { background-color: #b91c1c; color: white; }
+  </style>
+</head>
+<body class="py-4">
+  <div class="container" style="max-width: 960px;">
+    
+    <!-- Top Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+      <div>
+        <h2 class="fw-bold m-0"><i class="bi bi-sliders me-2"></i>Admin Panel Ugie Kopi</h2>
+        <p class="text-muted small m-0">Input Data Transaksi Penjualan & Pengeluaran Kas</p>
+      </div>
+      <a href="index.html" class="btn btn-outline-secondary btn-sm px-3 fw-medium">
+        <i class="bi bi-speedometer2 me-1"></i> Lihat Dashboard
+      </a>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="alertBox" class="alert d-none rounded-3 shadow-sm" role="alert"></div>
+
+    <div class="row g-4">
+      <!-- Form Input Penjualan -->
+      <div class="col-md-6">
+        <div class="card-form p-4">
+          <div class="d-flex align-items-center gap-2 mb-3 text-primary">
+            <i class="bi bi-cart-plus-fill fs-4"></i>
+            <h5 class="fw-bold m-0">Input Penjualan</h5>
+          </div>
+          <form id="formPenjualan">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Tanggal</label>
+              <input type="date" id="penjualanTanggal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Nama Menu / Produk</label>
+              <input type="text" id="penjualanMenu" class="form-control" placeholder="Contoh: Kopi Susu Aren" required>
+            </div>
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Qty</label>
+                <input type="number" id="penjualanQty" class="form-control" value="1" min="1" required>
+              </div>
+              <div class="col-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Harga Satuan (Rp)</label>
+                <input type="number" id="penjualanHarga" class="form-control" placeholder="18000" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Metode Pembayaran</label>
+              <select id="penjualanMetode" class="form-select">
+                <option value="Tunai">Tunai</option>
+                <option value="QRIS">QRIS</option>
+                <option value="Transfer">Transfer</option>
+                <option value="Kasbon">Kasbon / Piutang</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Pelanggan (Opsional)</label>
+              <input type="text" id="penjualanPelanggan" class="form-control" placeholder="-">
+            </div>
+            <button type="submit" class="btn btn-submit-blue w-100 mt-2">
+              <i class="bi bi-check-circle me-1"></i> Simpan Penjualan
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Form Input Pengeluaran -->
+      <div class="col-md-6">
+        <div class="card-form p-4">
+          <div class="d-flex align-items-center gap-2 mb-3 text-danger">
+            <i class="bi bi-dash-circle-fill fs-4"></i>
+            <h5 class="fw-bold m-0">Input Pengeluaran</h5>
+          </div>
+          <form id="formPengeluaran">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Tanggal</label>
+              <input type="date" id="pengeluaranTanggal" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Kategori</label>
+              <select id="pengeluaranKategori" class="form-select" required>
+                <option value="Bahan Baku">Bahan Baku (HPP)</option>
+                <option value="Operasional">Operasional (Listrik, Air, Gaji, dll)</option>
+                <option value="Lain-lain">Lain-lain</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Keterangan / Item</label>
+              <input type="text" id="pengeluaranKeterangan" class="form-control" placeholder="Contoh: Biji Kopi Espresso 1kg" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Nominal (Rp)</label>
+              <input type="number" id="pengeluaranNominal" class="form-control" placeholder="150000" required>
+            </div>
+            <button type="submit" class="btn btn-submit-red w-100 mt-2">
+              <i class="bi bi-check-circle me-1"></i> Simpan Pengeluaran
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('penjualanTanggal').value = today;
+    document.getElementById('pengeluaranTanggal').value = today;
+
+    function showAlert(message, isSuccess = true) {
+      const alertBox = document.getElementById('alertBox');
+      alertBox.className = `alert ${isSuccess ? 'alert-success' : 'alert-danger'} shadow-sm`;
+      alertBox.innerHTML = message;
+      alertBox.classList.remove('d-none');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => alertBox.classList.add('d-none'), 5000);
+    }
+
+    // Submit Penjualan
+    document.getElementById('formPenjualan').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        tanggal: document.getElementById('penjualanTanggal').value,
+        menu: document.getElementById('penjualanMenu').value,
+        qty: document.getElementById('penjualanQty').value,
+        harga: document.getElementById('penjualanHarga').value,
+        metode: document.getElementById('penjualanMetode').value,
+        pelanggan: document.getElementById('penjualanPelanggan').value || '-'
+      };
+
+      try {
+        const res = await fetch('/api/input/penjualan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server status ${res.status}: Harap jalankan ulang server.js`);
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          showAlert('<i class="bi bi-check-circle-fill me-2"></i>Data Penjualan berhasil disimpan ke Google Sheets!');
+          document.getElementById('penjualanMenu').value = '';
+          document.getElementById('penjualanHarga').value = '';
+        } else {
+          showAlert('<i class="bi bi-exclamation-triangle-fill me-2"></i>Gagal: ' + data.message, false);
+        }
+      } catch (err) {
+        showAlert('<i class="bi bi-exclamation-triangle-fill me-2"></i>Error: ' + err.message, false);
+      }
+    });
+
+    // Submit Pengeluaran
+    document.getElementById('formPengeluaran').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        tanggal: document.getElementById('pengeluaranTanggal').value,
+        kategori: document.getElementById('pengeluaranKategori').value,
+        keterangan: document.getElementById('pengeluaranKeterangan').value,
+        nominal: document.getElementById('pengeluaranNominal').value
+      };
+
+      try {
+        const res = await fetch('/api/input/pengeluaran', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          throw new Error(`Server status ${res.status}: Harap jalankan ulang server.js`);
+        }
+
+        const data = await res.json();
+        if (data.success) {
+          showAlert('<i class="bi bi-check-circle-fill me-2"></i>Data Pengeluaran berhasil disimpan ke Google Sheets!');
+          document.getElementById('pengeluaranKeterangan').value = '';
+          document.getElementById('pengeluaranNominal').value = '';
+        } else {
+          showAlert('<i class="bi bi-exclamation-triangle-fill me-2"></i>Gagal: ' + data.message, false);
+        }
+      } catch (err) {
+        showAlert('<i class="bi bi-exclamation-triangle-fill me-2"></i>Error: ' + err.message, false);
+      }
+    });
+  </script>
+</body>
+</html>
